@@ -1,0 +1,44 @@
+networks:
+  backend:
+    driver: bridge
+
+services:
+  backend:
+    build:
+      context: ./backend
+    depends_on:
+      - db
+    env_file: ./backend/.env
+    ports:
+      - 8080:8080
+    volumes:
+      - ./backend:/backend
+    networks:
+      - backend
+
+  frontend:
+    build:
+      context: ./frontend
+    command: yarn dev
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/frontend
+      - ./frontend/package.json:/frontend/package.json
+      - ./frontend/yarn.lock:/frontend/yarn.lock
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
+
+  db:
+    image: postgres:14.1-alpine
+    environment:
+      - POSTGRES_PASSWORD=secret
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  db_data:

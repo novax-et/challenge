@@ -1,0 +1,15 @@
+.typography {
+  &--title {
+    font-size: 1.875rem;
+    font-weight: 600;
+  }
+
+  &--description {
+    // font-size: 0.875rem;
+    color: #919191;
+  }
+
+  &--mb-xs {
+    margin-bottom: 2px;
+  }
+}

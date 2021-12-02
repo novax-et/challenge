@@ -1,0 +1,16 @@
+# Do the npm install or yarn install in the full image
+FROM node:16-alpine AS builder
+WORKDIR /frontend
+COPY package.json .
+RUN yarn install
+COPY . .
+RUN yarn build && yarn --production
+
+# And then copy over node_modules, etc from that stage to the smaller base image
+FROM node:16-alpine:base
+WORKDIR /frontend
+COPY --from=builder /frontend/node_modules ./node_modules
+COPY --from=builder /frontend/.next ./.next
+COPY --from=builder /frontend/next.config.js ./next.config.js
+EXPOSE 3000
+CMD ["node_modules/.bin/next", "start"]
